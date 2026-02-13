@@ -1,0 +1,9 @@
+apache*
+bin/
+build/
+lib/
+target/
+.idea/
+.vscode/
+node_modules/
+*.class
