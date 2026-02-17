@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 
 import co.icesi.model.User;
 import co.icesi.services.UserService;
+import co.icesi.views.UsersView;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -27,6 +28,7 @@ public class UserServlet extends HttpServlet{
 
     private UserService service;
     private Gson encoder;
+    private UsersView view;
 
     @Override
     public void init() throws ServletException {
@@ -34,16 +36,22 @@ public class UserServlet extends HttpServlet{
         ApplicationContext context = 
                 WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
         service = context.getBean(UserService.class);
+        view = new UsersView();
     }
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        
         List<User> users = service.getUsers();
+        StringBuilder builder = new StringBuilder();
+        builder.append("<html>");
 
-        String data = encoder.toJson(users);
+        builder.append("<body>");
+        builder.append(view.listUsers(users));
+        builder.append("</body>");
+        builder.append("</html>");
 
-        resp.getWriter().println(data);
+        resp.setContentType("text/html");
+        resp.getWriter().println(builder.toString());
 
     }
 
@@ -64,5 +72,11 @@ public class UserServlet extends HttpServlet{
 
         Map<String,String> data = encoder.fromJson(body, HashMap.class);
         System.out.println(data);
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // TODO Auto-generated method stub
+        super.doOptions(req, resp);
     }
 }
