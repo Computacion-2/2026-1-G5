@@ -3,14 +3,19 @@ package co.icesi.repositories;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.icesi.model.User;
+import org.springframework.stereotype.Component;
 
+import co.icesi.model.User;
+import jakarta.annotation.PostConstruct;
+
+@Component
 public class UserRepository {
 
     private List<User> users = new ArrayList<>();
 
     private long currentId;
 
+    @PostConstruct
     public void init(){
         User user = new User(0, "Name", "username", "password", null);
         save(user);

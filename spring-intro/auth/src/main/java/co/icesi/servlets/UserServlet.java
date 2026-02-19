@@ -2,15 +2,12 @@ package co.icesi.servlets;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.security.Provider.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import com.google.gson.Gson;
 

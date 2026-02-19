@@ -2,14 +2,20 @@ package co.icesi.services;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import co.icesi.model.Role;
 import co.icesi.model.User;
 import co.icesi.repositories.RoleRepository;
 import co.icesi.repositories.UserRepository;
 
+@Component
 public class UserService {
     
+    @Autowired
     private UserRepository repository;
+    @Autowired
     private RoleRepository roleRepository;
 
     public void setRepository(UserRepository repository) {
