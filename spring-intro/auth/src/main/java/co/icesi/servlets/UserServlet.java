@@ -1,15 +1,10 @@
 package co.icesi.servlets;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import com.google.gson.Gson;
 
 import co.icesi.model.User;
 import co.icesi.services.UserService;
@@ -24,12 +19,10 @@ import jakarta.servlet.http.HttpServletResponse;
 public class UserServlet extends HttpServlet{
 
     private UserService service;
-    private Gson encoder;
     private UsersView view;
 
     @Override
     public void init() throws ServletException {
-        encoder = new Gson();
         ApplicationContext context = 
                 WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
         service = context.getBean(UserService.class);
@@ -41,9 +34,20 @@ public class UserServlet extends HttpServlet{
         List<User> users = service.getUsers();
         StringBuilder builder = new StringBuilder();
         builder.append("<html>");
-
+        builder.append("<head>");
+        builder.append("<link rel=\"stylesheet\" href=\"/auth/userList.css\">");
+        builder.append("<script src=\"/auth/userList.js\"></script>");
+        builder.append("</head>");
         builder.append("<body>");
+        builder.append("<div id=\"successBox\" class=\"message\"> Usuario agregado exitosamente</div>");
+        builder.append("<a href=\"/auth/login\" class=\"logout\">Cerrar sesión</a>");
+        builder.append("<h1>Lista de usuarios</h1>");
+        builder.append("<div class=\"table-container\">");
         builder.append(view.listUsers(users));
+        builder.append("</div>");
+        builder.append("<div class=\"form-container\">");
+        builder.append(view.createUserForm());
+        builder.append("</div>");
         builder.append("</body>");
         builder.append("</html>");
 
@@ -54,26 +58,19 @@ public class UserServlet extends HttpServlet{
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        BufferedReader reader = req.getReader();
-
-        String body = "";
-        boolean end = false;
-        while (!end) {
-            String current = reader.readLine();
-            if(current == null){
-                end = true;
-            }else{
-                body += current;
-            }
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String name = req.getParameter("firstName");
+        String roles = req.getParameter("roles");
+        resp.setStatus(HttpServletResponse.SC_SEE_OTHER); // 303
+        try {
+            service.addUser(name, username, password, roles);
+            resp.setHeader("Location", req.getContextPath() + "/users?success=true");
+        } catch (Exception e) {
+            resp.setHeader("Location", req.getContextPath() + "/users?success=false");
         }
 
-        Map<String,String> data = encoder.fromJson(body, HashMap.class);
-        System.out.println(data);
+
     }
 
-    @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        super.doOptions(req, resp);
-    }
 }

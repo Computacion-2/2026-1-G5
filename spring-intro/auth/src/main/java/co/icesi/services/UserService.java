@@ -10,6 +10,7 @@ import co.icesi.model.Role;
 import co.icesi.model.User;
 import co.icesi.repositories.RoleRepository;
 import co.icesi.repositories.UserRepository;
+import jakarta.annotation.PostConstruct;
 
 @Component
 public class UserService {
@@ -19,8 +20,17 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
-    @Qualifier("myBean")
+    @Qualifier("databaseLoader")
     private LoadUserService authService;
+
+    @PostConstruct
+    public void init(){
+        User u = repository.findByUsername("amunoz");
+        Role r = roleRepository.findById(2);
+
+        u.getRoles().add(r);
+        r.getUsers().add(u);
+    }
 
     public void setRepository(UserRepository repository) {
         this.repository = repository;
@@ -34,11 +44,30 @@ public class UserService {
         this.roleRepository = roleRepository;
     }
 
-    public void addUser(String name, String username, String password){
+    public void addUser(String name, String username, String password, String roles){
+        if (name != null && !name.isEmpty() && username != null && !username.isEmpty() && password != null && !password.isEmpty()) {
+            if(repository.findByUsername(username) != null){
+                throw new RuntimeException("Username already exists");
+            }
+        } else {
+            throw new RuntimeException("Name, username and password are required");
+            
+        }
+
         User user = new User();
         user.setName(name);
         user.setPassword(password);
         user.setUsername(username);
+
+        String[] rolesArray = roles.split(",");
+        for (String roleId : rolesArray) {
+            Role role = roleRepository.findById(Long.parseLong(roleId));
+            if (role != null) {
+                user.getRoles().add(role);
+                role.getUsers().add(user);
+            }
+        }
+
         repository.save(user);
     }
 

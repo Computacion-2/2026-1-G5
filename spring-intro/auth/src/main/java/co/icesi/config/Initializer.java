@@ -16,6 +16,7 @@ public class Initializer implements WebApplicationInitializer{
         context.register(AppConfiguration.class);
         
         servletContext.addListener(new ContextLoaderListener(context));
+        
     }
     
 }

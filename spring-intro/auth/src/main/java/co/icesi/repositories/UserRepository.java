@@ -21,7 +21,7 @@ public class UserRepository {
 
     @PostConstruct
     public void init(){
-        User user = new User(0, "Name", "username", "password", null);
+        User user = new User(0, "Alejandro Muñoz", "amunoz", "password", null);
         save(user);
     }
 
@@ -40,7 +40,7 @@ public class UserRepository {
     }
 
     public User findByUsername(String username){
-        return users.stream().filter(u -> u.getUsername().equals(username)).findFirst().get();
+        return users.stream().filter(u -> u.getUsername().equals(username)).findFirst().orElse(null);
     }
     public List<User> findAll() {
         return users;

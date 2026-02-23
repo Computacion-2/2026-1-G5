@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+    .login-container {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        width: 320px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .error {
+        background-color: #ffe0e0;
+        color: #b30000;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        text-align: center;
+        display: none;
+    }
+
+    label {
+        display: block;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 100%;
+        margin-top: 18px;
+        padding: 10px;
+        background-color: #1976d2;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    button:hover {
+        background-color: #115293;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Iniciar sesión</h2>
+
+<div id="errorBox" class="error">
+    Usuario o contraseña incorrectos
+</div>
+
+<form method="post" action="login">
+    <label>Usuario</label>
+    <input type="text" name="username" required>
+
+    <label>Contraseña</label>
+    <input type="password" name="password" required>
+
+    <button type="submit">Ingresar</button>
+</form>
+
+
+</div>
+
+<script>
+    // Leer parámetros de la URL
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("fail") === "true") {
+        document.getElementById("errorBox").style.display = "block";
+    }
+</script>
+
+</body>
+</html>
