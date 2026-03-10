@@ -44,7 +44,12 @@ public class Asset {
     private List<Asset> childs;
 
     @OneToMany(mappedBy = "asset")
+    @JsonIgnore
     private List<ProcessAsset> processes;
+
+    @OneToMany(mappedBy = "asset")
+    @JsonIgnore
+    private List<Measurement> measurements;
 
 
 }
