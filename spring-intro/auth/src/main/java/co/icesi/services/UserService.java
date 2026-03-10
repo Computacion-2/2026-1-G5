@@ -19,14 +19,13 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
-    @Qualifier("myBean")
-    private LoadUserService authService;
+    private List<LoadUserService> authService;
 
     public void setRepository(UserRepository repository) {
         this.repository = repository;
     }
 
-    public void setAuthService(LoadUserService authService) {
+    public void setAuthService(List<LoadUserService> authService) {
         this.authService = authService;
     }
 
@@ -57,7 +56,11 @@ public class UserService {
     }
 
     public boolean login(String username, String password){
-        return authService.isUserValid(username, password);
+        System.out.println("\n\n\n\n");
+        for (LoadUserService loadUserService : authService) {
+            System.out.println(loadUserService.getClass().getName());
+        }
+        return authService.stream().anyMatch(l -> l.isUserValid(username, password));
     }
 
     public String getUrl() {
