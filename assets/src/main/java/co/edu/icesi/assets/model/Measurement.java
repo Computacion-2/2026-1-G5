@@ -2,6 +2,8 @@ package co.edu.icesi.assets.model;
 
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,6 +32,9 @@ public class Measurement {
     @JoinColumn(name = "asset")
     private Asset asset;
 
-    private Integer execution;
+    @ManyToOne
+    @JoinColumn(name = "execution")
+    @JsonIgnore
+    private Execution execution;
 
 }

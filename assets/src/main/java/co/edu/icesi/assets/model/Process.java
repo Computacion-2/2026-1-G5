@@ -28,4 +28,7 @@ public class Process {
 
     @OneToMany(mappedBy = "process")
     private List<ProcessAsset> assets;
+
+    @OneToMany(mappedBy = "process")
+    private List<Execution> executions;
 }

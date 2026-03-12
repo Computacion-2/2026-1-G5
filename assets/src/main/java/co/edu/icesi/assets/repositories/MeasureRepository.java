@@ -17,5 +17,7 @@ public interface MeasureRepository extends JpaRepository<Measurement, Integer>{
 
     List<Measurement> findByAsset_NameAndTime_Between(String name, Timestamp t1, Timestamp t2, Pageable pageable);
 
+    List<Measurement> findByExecution_Process_IdAndTime_Between(Integer processId, Timestamp t1, Timestamp t2, Pageable pageable);
 
+    
 }
