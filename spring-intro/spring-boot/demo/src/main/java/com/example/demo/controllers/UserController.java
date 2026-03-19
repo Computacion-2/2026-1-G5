@@ -1,17 +1,14 @@
 package com.example.demo.controllers;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.Permission;
+import com.example.demo.dtos.user.UserAddDTO;
 import com.example.demo.model.User;
 import com.example.demo.repositories.PermissionRepository;
 import com.example.demo.repositories.UserRepository;
@@ -19,7 +16,7 @@ import com.example.demo.services.UserService;
 
 
 
-@RestController
+@Controller
 @RequestMapping("/api")
 public class UserController {
     
@@ -33,37 +30,27 @@ public class UserController {
     private UserService service;
 
     @GetMapping("/users")
-    public List<User> getUsers() {
-        return repository.findAll();
+    public String getUsers(Model model) {
+        model.addAttribute("users", repository.findAll());
+        return "users/listUsers";
     }
 
-
-    @GetMapping("/users/{userId}")
-    public User getUserByUserId(@PathVariable(required = true) Long userId) {
-
-        return repository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    @GetMapping("/users/filter/{username}")
-    public Map<String, Object> getUserByUsername(@PathVariable(required = true) String username) {
-        User user = repository.findByUsername(username);
-        List<Permission> permissions = permissionRepository.getUserPermissions(user.getId());
-        return Map.of("user", user, "permissions", permissions);
+    @GetMapping("/create-user")
+    public String getFormulate() {
+        return "users/createUser";
     }
 
     @PostMapping("/users")
-    public String postMethodName(@RequestBody User entity) {
-        repository.save(entity);
+    public String addUsers(@ModelAttribute("user") UserAddDTO dto) {
+        System.out.println(dto.getUsername());
+        System.out.println(dto.getEmail());
+        User user = new User();
+        user.setName(dto.getUsername());
+        user.setUsername(dto.getEmail());
+        user.setPassword("sdas");
+        repository.save(user);
+        return "redirect:/api/users";
+    }
 
-        return "success";
-    }
-    
-    @GetMapping("/users/{userId}/{roleId}")
-    public String postMethodName(@PathVariable Long userId, @PathVariable Long roleId)throws Exception {
-        System.out.println(userId + ":" + roleId);
-        service.addRoleToUser(userId, roleId);
-        return "success";
-    }
-    
 
 }
