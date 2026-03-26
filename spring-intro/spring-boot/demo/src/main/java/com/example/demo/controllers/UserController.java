@@ -1,6 +1,8 @@
 package com.example.demo.controllers;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,9 @@ import com.example.demo.model.User;
 import com.example.demo.repositories.PermissionRepository;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.services.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 
 
 
@@ -30,7 +35,8 @@ public class UserController {
     private UserService service;
 
     @GetMapping("/users")
-    public String getUsers(Model model) {
+    public String getUsers(Model model, Authentication auth, HttpServletRequest request) {
+        
         model.addAttribute("users", repository.findAll());
         return "users/listUsers";
     }
