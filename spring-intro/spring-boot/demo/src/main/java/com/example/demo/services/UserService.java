@@ -78,7 +78,8 @@ public class UserService implements UserDetailsService{
             throw new UsernameNotFoundException("User with username doesnt exists");
         }
 
-        UserDetails details= new UserDetailCustome();
+        UserDetailCustome details= new UserDetailCustome();
+        details.setUser(user);
 
        return details;
     }
