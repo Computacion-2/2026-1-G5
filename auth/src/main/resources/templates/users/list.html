@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Usuarios</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/dashboard">🔐 Sistema de Autenticación</a>
+            </div>
+            <div class="nav-menu">
+                <a href="/users">Usuarios</a>
+                <a href="/roles">Roles</a>
+                <a href="/permissions">Permisos</a>
+                <div class="nav-user">
+                    <span sec:authentication="name"></span>
+                    <a href="/logout" class="btn-logout">Salir</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <div class="page-header">
+            <h1>Gestión de Usuarios</h1>
+            <a href="/users/new" class="btn-primary" sec:authorize="hasAuthority('USER_CREATE')">+ Nuevo Usuario</a>
+        </div>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Nombre</th>
+                    <th>Roles</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.username}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.firstName} + ' ' + ${user.lastName}"></td>
+                    <td>
+                        <div class="role-list">
+                            <span th:each="role : ${user.roles}" class="badge" th:text="${role.name}"></span>
+                            <span th:if="${user.roles.isEmpty()}" class="text-muted">Sin roles</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="#" th:href="@{/users/{id}/edit(id=${user.id})}" class="btn-sm btn-edit" 
+                               sec:authorize="hasAuthority('USER_EDIT')">Editar</a>
+                            
+                            <button class="btn-sm btn-role" th:onclick="openAddRoleModal([[${user.id}]], [[${user.username}]])"
+                                    sec:authorize="hasAuthority('USER_ROLE_ASSIGN')">
+                                Agregar Rol
+                            </button>
+                            
+                            <form method="post" th:action="@{/users/{id}/delete(id=${user.id})}" 
+                                  style="display:inline;" sec:authorize="hasAuthority('USER_DELETE')">
+                                <button type="submit" class="btn-sm btn-delete" 
+                                        onclick="return confirm('¿Estás seguro?')">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    
+    <!-- Modal para agregar rol -->
+    <div id="roleModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddRoleModal()">&times;</span>
+            <h2>Agregar Rol a Usuario</h2>
+            <form id="roleForm" method="post" th:action="@{/users/{id}/add-role(id=${userId})}">
+                <input type="hidden" id="userId" name="">
+                <div class="form-group">
+                    <label for="roleSelect">Selecciona un rol:</label>
+                    <select id="roleSelect" name="roleId" required>
+                        <option value="">-- Selecciona un rol --</option>
+                        <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Agregar</button>
+            </form>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>&copy; 2026 Sistema de Gestión de Autenticación y Permisos</p>
+    </footer>
+    
+    <script src="/js/main.js"></script>
+    <script>
+        
+        function openAddRoleModal(userId, username) {
+            document.getElementById('roleModal').style.display = 'block';
+            document.getElementById('userId').value = userId;
+            document.querySelector('.modal h2').textContent = 'Agregar Rol a ' + username;
+        }
+        
+        function closeAddRoleModal() {
+            document.getElementById('roleModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('roleModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

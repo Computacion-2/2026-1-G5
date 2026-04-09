@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/dashboard">🔐 Sistema de Autenticación</a>
+            </div>
+            <div class="nav-menu">
+                <a href="/users">Usuarios</a>
+                <a href="/roles">Roles</a>
+                <a href="/permissions">Permisos</a>
+                <div class="nav-user">
+                    <span sec:authentication="name"></span>
+                    <a href="/logout" class="btn-logout">Salir</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <div class="dashboard">
+            <h1>Dashboard</h1>
+            
+            <div class="welcome-card">
+                <h2><span th:text="'Hola, '"></span> <span sec:authentication="name"></span><span th:text="'!'"></span></h2>
+                <p>Bienvenido al sistema de gestión de autenticación y permisos.</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="card" sec:authorize="hasAuthority('USER_LIST')">
+                    <h3>📋 Usuarios</h3>
+                    <p>
+                        Visualiza y gestiona los usuarios del sistema.
+                    </p>
+                    <a href="/users" class="btn-link">Ver Usuarios</a>
+                </div>
+                
+                <div class="card" sec:authorize="hasAuthority('ROLE_LIST')">
+                    <h3>👥 Roles</h3>
+                    <p>
+                        Administra los roles y sus permisos.
+                    </p>
+                    <a href="/roles" class="btn-link">Ver Roles</a>
+                </div>
+                
+                <div class="card" sec:authorize="hasAuthority('PERMISSION_LIST')">
+                    <h3>🔑 Permisos</h3>
+                    <p>
+                        Consulta los permisos disponibles.
+                    </p>
+                    <a href="/permissions" class="btn-link">Ver Permisos</a>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>Tus Roles:</h3>
+                <p th:if="${user.roles.isEmpty()}">No tienes roles asignados</p>
+                <ul th:unless="${user.roles.isEmpty()}">
+                    <li th:each="role : ${user.roles}" th:text="${role.name}"></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2026 Sistema de Gestión de Autenticación y Permisos</p>
+    </footer>
+</body>
+</html>

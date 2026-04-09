@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Formulario de Rol</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/dashboard">🔐 Sistema de Autenticación</a>
+            </div>
+            <div class="nav-menu">
+                <a href="/users">Usuarios</a>
+                <a href="/roles">Roles</a>
+                <a href="/permissions">Permisos</a>
+                <div class="nav-user">
+                    <span sec:authentication="name"></span>
+                    <a href="/logout" class="btn-logout">Salir</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <div class="form-container">
+            <h1 th:text="${role.id == null ? 'Crear Rol' : 'Editar Rol'}"></h1>
+            
+            <form th:if="${role.id == null}" method="post" th:action="/roles" class="form-main">
+                <div class="form-group">
+                    <label for="name">Nombre del Rol:*</label>
+                    <input type="text" id="name" name="name" th:value="${role.name}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Descripción:</label>
+                    <textarea id="description" name="description" rows="4" th:text="${role.description}"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Crear Rol</button>
+                    <a href="/roles" class="btn-secondary">Cancelar</a>
+                </div>
+            </form>
+            
+            <form th:unless="${role.id == null}" th:action="@{/roles/{id}/update(id=${role.id})}" method="post" class="form-main">
+                <div class="form-group">
+                    <label for="name">Nombre del Rol:*</label>
+                    <input type="text" id="name" name="name" th:value="${role.name}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Descripción:</label>
+                    <textarea id="description" name="description" rows="4" th:text="${role.description}"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Actualizar Rol</button>
+                    <a href="/roles" class="btn-secondary">Cancelar</a>
+                </div>
+            </form>
+            
+            <!-- Agregar Permisos -->
+            <div th:if="${role.id != null}" sec:authorize="hasAuthority('ROLE_PERMISSION_ADD')" class="permissions-section">
+                <h2>Agregar Permisos</h2>
+                <div class="permission-grid">
+                    <div th:each="permission : ${permissions}" class="permission-item">
+                        <div class="permission-card">
+                            <h4 th:text="${permission.name}"></h4>
+                            <p th:text="${permission.description}"></p>
+                            
+                            <form th:if="${not role.permissions.contains(permission)}" 
+                                  th:action="@{/roles/{roleId}/add-permission(roleId=${role.id})}"
+                                  method="post" style="display:inline;">
+                                <input type="hidden" name="permissionId" th:value="${permission.id}">
+                                <button type="submit" class="btn-sm btn-add">Agregar</button>
+                            </form>
+                            
+                            <form th:if="${role.permissions.contains(permission)}" 
+                                  th:action="@{/roles/{roleId}/remove-permission(roleId=${role.id})}"
+                                  method="post" style="display:inline;" sec:authorize="hasAuthority('ROLE_PERMISSION_REMOVE')">
+                                <input type="hidden" name="permissionId" th:value="${permission.id}">
+                                <button type="submit" class="btn-sm btn-remove">Remover</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2026 Sistema de Gestión de Autenticación y Permisos</p>
+    </footer>
+</body>
+</html>

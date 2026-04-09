@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Roles</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="/dashboard">🔐 Sistema de Autenticación</a>
+            </div>
+            <div class="nav-menu">
+                <a href="/users">Usuarios</a>
+                <a href="/roles">Roles</a>
+                <a href="/permissions">Permisos</a>
+                <div class="nav-user">
+                    <span sec:authentication="name"></span>
+                    <a href="/logout" class="btn-logout">Salir</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <div class="page-header">
+            <h1>Gestión de Roles</h1>
+            <a href="/roles/new" class="btn-primary" sec:authorize="hasAuthority('ROLE_CREATE')">+ Nuevo Rol</a>
+        </div>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Rol</th>
+                    <th>Descripción</th>
+                    <th>Permisos</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="role : ${roles}">
+                    <td th:text="${role.name}"></td>
+                    <td th:text="${role.description}"></td>
+                    <td>
+                        <div class="permission-list">
+                            <span th:each="permission : ${role.permissions}" class="badge-permission" 
+                                  th:text="${permission.name}"></span>
+                            <span th:if="${role.permissions.isEmpty()}" class="text-muted">Sin permisos</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="#" th:href="@{/roles/{id}/edit(id=${role.id})}" class="btn-sm btn-edit"
+                               sec:authorize="hasAuthority('ROLE_EDIT')">Editar</a>
+                            
+                            <form method="post" th:action="@{/roles/{id}/delete(id=${role.id})}" 
+                                  style="display:inline;" sec:authorize="hasAuthority('ROLE_DELETE')">
+                                <button type="submit" class="btn-sm btn-delete"
+                                        onclick="return confirm('¿Estás seguro?')">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; 2026 Sistema de Gestión de Autenticación y Permisos</p>
+    </footer>
+</body>
+</html>
