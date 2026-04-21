@@ -24,9 +24,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // .securityMatcher("/**") // Aplica a todas las rutas
+            .securityMatcher("/**") 
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/", "/register", "/api/register", "/css/**", "/js/**", "/h2-console/**").permitAll()
+                .requestMatchers("method").hasRole("role")
                 .anyRequest().authenticated()
             )
             .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))

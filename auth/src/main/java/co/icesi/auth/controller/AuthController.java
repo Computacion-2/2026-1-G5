@@ -1,12 +1,16 @@
 package co.icesi.auth.controller;
 
-import co.icesi.auth.model.User;
-import co.icesi.auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import co.icesi.auth.model.User;
+import co.icesi.auth.service.UserService;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class AuthController {
@@ -45,9 +49,10 @@ public class AuthController {
     }
     
     @GetMapping("/dashboard")
-    public String dashboard(Authentication authentication, Model model) {
+    public String dashboard(Authentication authentication, Model model, HttpSession session) {
         User user = userService.getUserByUsername(authentication.getName());
         model.addAttribute("user", user);
         return "dashboard";
     }
 }
+

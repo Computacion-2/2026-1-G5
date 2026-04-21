@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import co.icesi.auth.model.User;
 import co.icesi.auth.service.RoleService;
 import co.icesi.auth.service.UserService;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
@@ -48,7 +50,11 @@ public class UserController {
     
     @PostMapping
     @PreAuthorize("hasAuthority('USER_CREATE')")
-    public String createUser(@ModelAttribute User user, @RequestParam(required = false) Long roleId) {
+    public String createUser(@Valid @ModelAttribute User user, BindingResult result, @RequestParam(required = false) Long roleId) {
+        if (result.hasErrors()) {
+            return "users/form";
+        }
+        
         userService.createUser(user);
         if (roleId != null) {
             userService.addRoleToUser(user.getId(), roleId);
