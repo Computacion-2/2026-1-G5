@@ -1,11 +1,13 @@
 package co.icesi.auth.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import co.icesi.auth.dtos.courses.CourseDetailDTO;
 import co.icesi.auth.model.Course;
 import co.icesi.auth.model.User;
 import co.icesi.auth.service.interfaces.CourseService;
@@ -35,9 +37,16 @@ public class CourseController implements CourseApi{
     }
 
     @Override
-    public ResponseEntity<Course> updateCourse(long id, Course c) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateCourse'");
+    public ResponseEntity<?> updateCourse(long id, Course c) {
+        try {
+            c.setId(id);
+            Course response = service.editCourse(c);
+            CourseDetailDTO dto = CourseDetailDTO.fromCourse(response);
+
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("reason", e.getMessage()));
+        }
     }
 
     @Override

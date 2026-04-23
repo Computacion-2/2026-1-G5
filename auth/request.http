@@ -11,3 +11,17 @@ Content-Type: application/json
     "code":"20261",
     "credits":3
 }
+
+###
+PUT  http://localhost:8080/auth/api/courses/1
+Content-Type: application/json
+
+{
+    "name": "Compu2",
+    "description":"Programacón web usando Spring + react",
+    "code":"20261",
+    "credits":3,
+    "teacher":{
+        "id":1
+    }
+}
