@@ -1,0 +1,13 @@
+GET http://localhost:8080/auth/api/courses
+
+
+###
+POST  http://localhost:8080/auth/api/courses
+Content-Type: application/json
+
+{
+    "name": "Compu1",
+    "description":"Spring + react",
+    "code":"20261",
+    "credits":3
+}

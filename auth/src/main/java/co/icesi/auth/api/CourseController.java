@@ -7,24 +7,43 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.icesi.auth.model.Course;
-import co.icesi.auth.repository.CourseRepository;
+import co.icesi.auth.model.User;
+import co.icesi.auth.service.interfaces.CourseService;
 
 @RestController
 public class CourseController implements CourseApi{
 
     @Autowired
-    private CourseRepository repo;
+    private CourseService service;
 
     @Override
     public List<Course> getCourses() {
-        return repo.findAll();
+        return service.getCourses();
         
     }
 
     @Override
-    public ResponseEntity<?> saveCourse(Course c) {
+    public ResponseEntity<Course> saveCourse(Course c) {
+        c = service.addCourse(c);
+        return ResponseEntity.ok(c);
+    }
+
+    @Override
+    public ResponseEntity<Course> addUserToCourse(long id, User c) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveCourse'");
+        throw new UnsupportedOperationException("Unimplemented method 'addUserToCourse'");
+    }
+
+    @Override
+    public ResponseEntity<Course> updateCourse(long id, Course c) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateCourse'");
+    }
+
+    @Override
+    public List<Course> getCourseDetail(long id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCourseDetail'");
     }
     
 }
