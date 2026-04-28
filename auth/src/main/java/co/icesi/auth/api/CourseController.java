@@ -28,7 +28,7 @@ public class CourseController implements CourseApi {
     public ResponseEntity<List<CourseDetailDTO>> getCourses() {
         try {
             List<Course> courses = service.getCourses();
-            List<CourseDetailDTO> dtos = courseMapper.courseListToDetailDTOList(courses);
+            List<CourseDetailDTO> dtos = null;
             return ResponseEntity.ok(dtos);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -43,10 +43,11 @@ public class AuthApiController {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String jwt = tokenProvider.generateToken(authentication);
             
             User user = userRepository.findByUsername(loginRequest.getUsername())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            
+            String jwt = tokenProvider.generateToken(authentication, user);
 
             return ResponseEntity.ok(new AuthResponse(jwt, user.getId(), user.getUsername(), user.getEmail()));
         } catch (Exception e) {
@@ -62,10 +63,11 @@ public class AuthApiController {
                 
                 if (tokenProvider.validateToken(jwt)) {
                     String username = tokenProvider.getUsernameFromToken(jwt);
-                    String newToken = tokenProvider.generateTokenFromUsername(username);
                     
                     User user = userRepository.findByUsername(username)
-                            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                    
+                    String newToken = tokenProvider.generateTokenFromUsername(username, user);
                     
                     return ResponseEntity.ok(new AuthResponse(newToken, user.getId(), user.getUsername(), user.getEmail()));
                 }
