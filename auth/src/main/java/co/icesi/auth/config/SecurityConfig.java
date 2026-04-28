@@ -42,7 +42,7 @@ public class SecurityConfig {
             .cors(c -> c.disable())
             .authorizeHttpRequests( a -> a
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/courses/**").authenticated()
+                .requestMatchers("/api/courses/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

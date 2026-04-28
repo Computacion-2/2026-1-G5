@@ -3,28 +3,37 @@ package co.icesi.auth.api;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import co.icesi.auth.model.*;
+import co.icesi.auth.dtos.courses.CourseDTO;
+import co.icesi.auth.dtos.courses.CourseDetailDTO;
+import co.icesi.auth.model.User;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/courses")
 public interface CourseApi {
     
     @GetMapping
-    public List<Course> getCourses();
+    public ResponseEntity<List<CourseDetailDTO>> getCourses();
 
     @PostMapping
-    public ResponseEntity<Course> saveCourse(@RequestBody Course c);
+    public ResponseEntity<CourseDetailDTO> saveCourse(@Valid @RequestBody CourseDTO courseDTO);
 
     @PostMapping("/{id}/students")
-    public ResponseEntity<Course> addUserToCourse(@PathVariable long id, @RequestBody User c);
+    public ResponseEntity<CourseDetailDTO> addUserToCourse(@PathVariable long id, @RequestBody User c);
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCourse(@PathVariable long id, @RequestBody Course c);
+    public ResponseEntity<CourseDetailDTO> updateCourse(@PathVariable long id, @Valid @RequestBody CourseDTO courseDTO);
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourseDetail(@PathVariable long id);
+    public ResponseEntity<CourseDetailDTO> getCourseDetail(@PathVariable long id);
 }
 
 
