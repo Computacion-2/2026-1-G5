@@ -1,8 +1,10 @@
-GET http://localhost:8080/auth/api/courses
+@host = localhost
+
+GET http://{{host}}:8080/auth/api/courses
 
 
 ###
-POST  http://localhost:8080/auth/api/courses
+POST  http://{{host}}:8080/auth/api/courses
 Content-Type: application/json
 
 {
@@ -13,7 +15,7 @@ Content-Type: application/json
 }
 
 ###
-PUT  http://localhost:8080/auth/api/courses/1
+PUT  http://{{host}}:8080/auth/api/courses/1
 Content-Type: application/json
 
 {
@@ -24,4 +26,29 @@ Content-Type: application/json
     "teacher":{
         "id":1
     }
+}
+
+
+###
+POST  http://{{host}}:8080/auth/api/courses/1/students
+Content-Type: application/json
+
+{
+    "id":1
+}
+
+
+###
+
+GET  http://{{host}}:8080/auth/api/courses/1
+Content-Type: application/json
+
+###
+
+POST  http://{{host}}:8080/auth/api/auth/login
+Content-Type: application/json
+
+{
+    "username":"admin",
+    "password":"admin123"
 }

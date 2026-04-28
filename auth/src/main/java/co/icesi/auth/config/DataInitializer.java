@@ -40,7 +40,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         
         // Crear usuario administrador si no existe
-        if (userRepository.findByUsername("admin") == null) {
+        if (userRepository.findByUsername("admin").isEmpty()) {
             createAdminUser();
         }
     }

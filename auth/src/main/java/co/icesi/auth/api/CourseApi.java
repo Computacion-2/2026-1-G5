@@ -24,7 +24,7 @@ public interface CourseApi {
     public ResponseEntity<?> updateCourse(@PathVariable long id, @RequestBody Course c);
 
     @GetMapping("/{id}")
-    public List<Course> getCourseDetail(@PathVariable long id);
+    public ResponseEntity<?> getCourseDetail(@PathVariable long id);
 }
 
 
