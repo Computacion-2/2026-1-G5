@@ -53,6 +53,8 @@ Content-Type: application/json
     "password":"admin123"
 }
 
+
+
 GET  http://{{host}}:8080/auth/api/courses
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3NzQwNTQ3MywiZXhwIjoxNzc3NDkxODczfQ.kynrudADwi1XbaeMtop2oFAHdo2sdt0eZcVbNSqYRt98xWN70MUFV82cgBmQ9bJG

@@ -1,0 +1,3 @@
+username,password,expectedCode
+admin,admin123,201
+user,user123,403

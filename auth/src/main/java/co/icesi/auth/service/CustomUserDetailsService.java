@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             .withUsername(user.getUsername())
             .password(user.getPassword())
             .authorities(user.getPermissions().stream()
-                .map(permission -> new SimpleGrantedAuthority( permission.getName()))
+                .map(permission -> new SimpleGrantedAuthority( "ROLE_"+permission.getName()))
                 .collect(Collectors.toSet()))
             .accountExpired(false)
             .accountLocked(!user.getEnabled())

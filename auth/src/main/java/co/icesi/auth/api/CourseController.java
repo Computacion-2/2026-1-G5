@@ -36,7 +36,7 @@ public class CourseController implements CourseApi {
     }
 
     @Override
-    public ResponseEntity<CourseDetailDTO> saveCourse(@Valid CourseDTO courseDTO) {
+    public ResponseEntity<CourseDetailDTO> saveCourse( CourseDTO courseDTO) {
         try {
             // Convertir DTO a Entity
             Course course = new Course();
@@ -52,6 +52,7 @@ public class CourseController implements CourseApi {
             CourseDetailDTO response = courseMapper.courseToDetailDTO(savedCourse);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }

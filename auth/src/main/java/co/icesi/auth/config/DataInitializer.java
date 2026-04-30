@@ -53,6 +53,8 @@ public class DataInitializer implements CommandLineRunner {
         permissionRepository.save(new Permission(null, "USER_DELETE", "Eliminar usuarios"));
         permissionRepository.save(new Permission(null, "USER_ROLE_ASSIGN", "Asignar roles a usuarios"));
         permissionRepository.save(new Permission(null, "USER_ROLE_REMOVE", "Remover roles de usuarios"));
+        permissionRepository.save(new Permission(null, "COURSE_CREATE", "Crear sursos"));
+
         
         // Permisos de Roles
         permissionRepository.save(new Permission(null, "ROLE_LIST", "Listar roles"));
@@ -97,9 +99,24 @@ public class DataInitializer implements CommandLineRunner {
         if (adminRole != null) {
             adminUser.addRole(adminRole);
         }
+
+        User user = new User();
+        user.setUsername("user");
+        user.setEmail("admin@icesi.edu.co");
+        user.setPassword(passwordEncoder.encode("user123"));
+        user.setFirstName("User");
+        user.setLastName("Sistema");
+        user.setEnabled(true);
+        
+        // Agregar rol ADMIN
+        Role userRole = roleRepository.findByName("USER");
+        if (userRole != null) {
+            user.addRole(userRole);
+        }
         
         userRepository.save(adminUser);
-        
+        userRepository.save(user);
+
         System.out.println("========================================");
         System.out.println("USUARIO ADMINISTRADOR CREADO");
         System.out.println("Usuario: admin");

@@ -6,6 +6,7 @@ import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
 import co.icesi.auth.dtos.courses.CourseDTO;
+import co.icesi.auth.dtos.courses.CourseDetailDTO;
 import co.icesi.auth.model.Course;
 import co.icesi.auth.model.User;
 
@@ -14,19 +15,23 @@ import co.icesi.auth.model.User;
 public interface CourseMapper {
 
     /**
-     * Mapea Course entity a CourseDTO para solicitudes de creación/actualización
+     * Mapea Course entity a CourseDTO
      */
-    @Mapping(source = "teacher", target = "teacherId", qualifiedByName="teacherToDto")
+    @Mapping(source = "teacher", target = "teacherId", qualifiedByName="teacherToId")
     CourseDTO courseToCourseDTO(Course course);
+    
+    @Mapping(source="students", target="students", qualifiedByName="userToString")
+    CourseDetailDTO courseToDetailDTO(Course course);
 
     @Named("teacherToId")
-    public default Long teacherToId(User user){
-        return user.getId();
+    default Long teacherToId(User user) {
+        return user != null ? user.getId() : null;
     }
+
     /**
      * Mapea CourseDTO a Course entity
      */
     @Mapping(source = "teacherId", target = "teacher.id")
     Course courseDTOToCourse(CourseDTO courseDTO);
-
 }
+

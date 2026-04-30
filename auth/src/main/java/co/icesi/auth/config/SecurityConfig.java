@@ -1,5 +1,6 @@
 package co.icesi.auth.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,12 +14,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import co.icesi.auth.exception.JwtAccessDeniedHandler;
+import co.icesi.auth.exception.JwtAuthenticationEntryPoint;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @Autowired
+    private JwtAccessDeniedHandler jwtAccessDeniedHandler;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -40,6 +48,10 @@ public class SecurityConfig {
         http.securityMatcher("/api/**")
             .csrf(c -> c.disable())
             .cors(c -> c.disable())
+            .exceptionHandling(e -> e
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+            )
             .authorizeHttpRequests( a -> a
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/courses/**").authenticated()
