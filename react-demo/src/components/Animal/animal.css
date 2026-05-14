@@ -1,0 +1,9 @@
+.animalConteiner {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.animalConteiner img{
+    width: 500px;
+}
