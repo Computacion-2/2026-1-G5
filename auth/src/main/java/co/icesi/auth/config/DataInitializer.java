@@ -12,6 +12,9 @@ import co.icesi.auth.repository.PermissionRepository;
 import co.icesi.auth.repository.RoleRepository;
 import co.icesi.auth.repository.UserRepository;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
     
@@ -29,98 +32,117 @@ public class DataInitializer implements CommandLineRunner {
     
     @Override
     public void run(String... args) throws Exception {
-        // Crear permisos si no existen
         if (permissionRepository.count() == 0) {
             createPermissions();
         }
         
-        // Crear rol de administrador si no existe
         if (roleRepository.findByName("ADMIN") == null) {
-            createAdminRole();
+            createRoles();
         }
         
-        // Crear usuario administrador si no existe
-        if (userRepository.findByUsername("admin").isEmpty()) {
-            createAdminUser();
+        if (userRepository.count() <= 2) {
+            createUsers();
         }
     }
     
     private void createPermissions() {
-        // Permisos de Usuario
-        permissionRepository.save(new Permission(null, "USER_LIST", "Listar usuarios"));
-        permissionRepository.save(new Permission(null, "USER_CREATE", "Crear usuarios"));
-        permissionRepository.save(new Permission(null, "USER_EDIT", "Editar usuarios"));
-        permissionRepository.save(new Permission(null, "USER_DELETE", "Eliminar usuarios"));
-        permissionRepository.save(new Permission(null, "USER_ROLE_ASSIGN", "Asignar roles a usuarios"));
-        permissionRepository.save(new Permission(null, "USER_ROLE_REMOVE", "Remover roles de usuarios"));
-        permissionRepository.save(new Permission(null, "COURSE_CREATE", "Crear sursos"));
+        // User Permissions
+        savePermission("USER_LIST", "Listar usuarios");
+        savePermission("USER_CREATE", "Crear usuarios");
+        savePermission("USER_EDIT", "Editar usuarios");
+        savePermission("USER_DELETE", "Eliminar usuarios");
+        
+        // Role Permissions
+        savePermission("ROLE_LIST", "Listar roles");
+        savePermission("ROLE_CREATE", "Crear roles");
+        savePermission("ROLE_EDIT", "Editar roles");
+        savePermission("ROLE_DELETE", "Eliminar roles");
+        
+        // Permission Permissions
+        savePermission("PERMISSION_LIST", "Listar permisos");
 
-        
-        // Permisos de Roles
-        permissionRepository.save(new Permission(null, "ROLE_LIST", "Listar roles"));
-        permissionRepository.save(new Permission(null, "ROLE_CREATE", "Crear roles"));
-        permissionRepository.save(new Permission(null, "ROLE_EDIT", "Editar roles"));
-        permissionRepository.save(new Permission(null, "ROLE_DELETE", "Eliminar roles"));
-        permissionRepository.save(new Permission(null, "ROLE_PERMISSION_ADD", "Agregar permisos a roles"));
-        permissionRepository.save(new Permission(null, "ROLE_PERMISSION_REMOVE", "Remover permisos de roles"));
-        
-        // Permisos de Permisos
-        permissionRepository.save(new Permission(null, "PERMISSION_LIST", "Listar permisos"));
+        // Course Permissions
+        savePermission("COURSE_READ", "Leer cursos");
+        savePermission("COURSE_CREATE", "Crear cursos");
+        savePermission("COURSE_UPDATE", "Actualizar cursos");
+        savePermission("COURSE_DELETE", "Eliminar cursos");
+        savePermission("COURSE_ENROLL", "Matricular estudiantes");
+
+        // Activity Permissions
+        savePermission("ACTIVITY_READ", "Leer actividades");
+        savePermission("ACTIVITY_CREATE", "Crear actividades");
+        savePermission("ACTIVITY_UPDATE", "Actualizar actividades");
+        savePermission("ACTIVITY_DELETE", "Eliminar actividades");
+
+        // Submission Permissions
+        savePermission("SUBMISSION_READ", "Leer entregas");
+        savePermission("SUBMISSION_CREATE", "Crear entregas");
+        savePermission("SUBMISSION_UPDATE", "Actualizar entregas");
+        savePermission("SUBMISSION_DELETE", "Eliminar entregas");
+        savePermission("SUBMISSION_GRADE", "Calificar entregas");
+    }
+
+    private void savePermission(String name, String description) {
+        permissionRepository.save(new Permission(null, name, description));
     }
     
-    private void createAdminRole() {
+    private void createRoles() {
+        // ADMIN Role
         Role adminRole = new Role();
         adminRole.setName("ADMIN");
         adminRole.setDescription("Rol de administrador con todos los permisos");
-        
-        // Agregar todos los permisos al rol ADMIN
         permissionRepository.findAll().forEach(adminRole::addPermission);
-
-        Role userRole = new Role();
-        userRole.setName("USER");
-        userRole.setDescription("Rol de usuario con permisos limitados");
-        permissionRepository.findAll().stream().filter(p -> p.getName().contains("LIST")).forEach(userRole::addPermission);
-
-        roleRepository.save(userRole);
         roleRepository.save(adminRole);
+
+        // PROFESSOR Role
+        Role professorRole = new Role();
+        professorRole.setName("PROFESSOR");
+        professorRole.setDescription("Rol de profesor");
+        List<String> profPerms = Arrays.asList(
+            "COURSE_READ", "COURSE_UPDATE", "COURSE_ENROLL",
+            "ACTIVITY_READ", "ACTIVITY_CREATE", "ACTIVITY_UPDATE", "ACTIVITY_DELETE",
+            "SUBMISSION_READ", "SUBMISSION_GRADE"
+        );
+        permissionRepository.findAll().stream()
+            .filter(p -> profPerms.contains(p.getName()))
+            .forEach(professorRole::addPermission);
+        roleRepository.save(professorRole);
+
+        // STUDENT Role
+        Role studentRole = new Role();
+        studentRole.setName("STUDENT");
+        studentRole.setDescription("Rol de estudiante");
+        List<String> studentPerms = Arrays.asList(
+            "COURSE_READ", "ACTIVITY_READ",
+            "SUBMISSION_READ", "SUBMISSION_CREATE", "SUBMISSION_UPDATE"
+        );
+        permissionRepository.findAll().stream()
+            .filter(p -> studentPerms.contains(p.getName()))
+            .forEach(studentRole::addPermission);
+        roleRepository.save(studentRole);
     }
     
-    private void createAdminUser() {
-        User adminUser = new User();
-        adminUser.setUsername("admin");
-        adminUser.setEmail("admin@icesi.edu.co");
-        adminUser.setPassword(passwordEncoder.encode("admin123"));
-        adminUser.setFirstName("Administrador");
-        adminUser.setLastName("Sistema");
-        adminUser.setEnabled(true);
-        
-        // Agregar rol ADMIN
-        Role adminRole = roleRepository.findByName("ADMIN");
-        if (adminRole != null) {
-            adminUser.addRole(adminRole);
-        }
+    private void createUsers() {
+        createUser("admin", "admin@icesi.edu.co", "admin123", "Admin", "Sistema", "ADMIN");
+        createUser("profesor", "profesor@icesi.edu.co", "prof123", "Profesor", "Icesi", "PROFESSOR");
+        createUser("estudiante", "estudiante@icesi.edu.co", "est123", "Estudiante", "Icesi", "STUDENT");
+    }
 
+    private void createUser(String username, String email, String password, String firstName, String lastName, String roleName) {
+        if (userRepository.findByUsername(username).isPresent()) return;
+        
         User user = new User();
-        user.setUsername("user");
-        user.setEmail("admin@icesi.edu.co");
-        user.setPassword(passwordEncoder.encode("user123"));
-        user.setFirstName("User");
-        user.setLastName("Sistema");
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
         user.setEnabled(true);
         
-        // Agregar rol ADMIN
-        Role userRole = roleRepository.findByName("USER");
-        if (userRole != null) {
-            user.addRole(userRole);
+        Role role = roleRepository.findByName(roleName);
+        if (role != null) {
+            user.addRole(role);
         }
-        
-        userRepository.save(adminUser);
         userRepository.save(user);
-
-        System.out.println("========================================");
-        System.out.println("USUARIO ADMINISTRADOR CREADO");
-        System.out.println("Usuario: admin");
-        System.out.println("Contraseña: admin123");
-        System.out.println("========================================");
     }
 }

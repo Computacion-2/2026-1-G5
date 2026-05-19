@@ -28,33 +28,41 @@ public class CourseServiceImp implements CourseService{
     }
 
     @Override
+    public Course getCourseById(long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+    }
+
+    @Override
     public Course addCourse(Course c) {
+        if (c.getTeacher() != null && c.getTeacher().getId() != null) {
+            User u = userRepository.findById(c.getTeacher().getId())
+                    .orElseThrow(() -> new RuntimeException("Profesor no encontrado"));
+            c.setTeacher(u);
+        }
         return repository.save(c);
     }
 
     @Override
     public Course editCourse(Course c) {
-        Optional<Course> optional = repository.findById(c.getId());
+        Course course = repository.findById(c.getId())
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
 
-        if (optional.isPresent()) {
-            Course course = optional.get();
+        course.setName(c.getName() == null ? course.getName() : c.getName());
+        course.setCode(c.getCode() == null ? course.getCode() : c.getCode());
+        course.setCredits(c.getCredits() == null ? course.getCredits() : c.getCredits());
+        course.setDescription(c.getDescription() == null ? course.getDescription() : c.getDescription());
 
-            course.setName(c.getName()==null ? course.getName():c.getName());
-            course.setCode(c.getCode()==null ? course.getCode():c.getCode());
-
-            course.setCredits(c.getCredits()==null ? course.getCredits():c.getCredits());
-            course.setDescription(c.getDescription()==null ? course.getDescription():c.getDescription());
-
-
-
-            if(c.getTeacher() != null){
-                User u = userRepository.findById(c.getTeacher().getId()).orElseThrow(() -> new RuntimeException("User not found"));
-                course.setTeacher(u);
-            }
-            return repository.save(course);
-        }else{
-            throw new RuntimeException("Course not found");
+        if (c.getTeacher() != null && c.getTeacher().getId() != null) {
+            User u = userRepository.findById(c.getTeacher().getId())
+                    .orElseThrow(() -> new RuntimeException("Profesor no encontrado"));
+            course.setTeacher(u);
         }
+        return repository.save(course);
+    }
+
+    @Override
+    public void deleteCourse(long id) {
+        repository.deleteById(id);
     }
 
     @Override

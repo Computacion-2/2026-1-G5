@@ -4,17 +4,10 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import co.icesi.auth.dtos.courses.CourseDTO;
 import co.icesi.auth.dtos.courses.CourseDetailDTO;
-import co.icesi.auth.model.User;
 import jakarta.validation.Valid;
 
 @RestController
@@ -22,20 +15,26 @@ import jakarta.validation.Valid;
 public interface CourseApi {
     
     @GetMapping
+    @PreAuthorize("hasAuthority('COURSE_READ')")
     public ResponseEntity<List<CourseDetailDTO>> getCourses();
 
     @PostMapping
-    @PreAuthorize("hasRole('COURSE_CREATE')")
+    @PreAuthorize("hasAuthority('COURSE_CREATE')")
     public ResponseEntity<CourseDetailDTO> saveCourse(@Valid @RequestBody CourseDTO courseDTO);
 
-    @PostMapping("/{id}/students")
-    public ResponseEntity<CourseDetailDTO> addUserToCourse(@PathVariable long id, @RequestBody User c);
+    @PostMapping("/{id}/enroll/{userId}")
+    @PreAuthorize("hasAuthority('COURSE_ENROLL')")
+    public ResponseEntity<CourseDetailDTO> addUserToCourse(@PathVariable long id, @PathVariable long userId);
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('COURSE_UPDATE')")
     public ResponseEntity<CourseDetailDTO> updateCourse(@PathVariable long id, @Valid @RequestBody CourseDTO courseDTO);
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('COURSE_READ')")
     public ResponseEntity<CourseDetailDTO> getCourseDetail(@PathVariable long id);
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('COURSE_DELETE')")
+    public ResponseEntity<Void> deleteCourse(@PathVariable long id);
 }
-
-

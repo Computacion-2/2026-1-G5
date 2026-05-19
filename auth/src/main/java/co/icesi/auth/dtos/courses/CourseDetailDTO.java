@@ -21,18 +21,4 @@ public class CourseDetailDTO {
     private UserTeacherDTO teacher;
 
     private List<String> students;
-
-    public static CourseDetailDTO fromCourse(Course course){
-        CourseDetailDTO dto = new CourseDetailDTO();
-
-        dto.setCode(course.getCode());
-        dto.setCredits(course.getCredits());
-        dto.setDescription(course.getDescription());
-        dto.setId(course.getId());
-        dto.setName(course.getName());
-        dto.setStudents(course.getStudents().stream().map(u -> u.getFirstName()).toList());
-        dto.setTeacher(UserTeacherDTO.fromEntity(course.getTeacher()));
-
-        return dto;
-    }
 }

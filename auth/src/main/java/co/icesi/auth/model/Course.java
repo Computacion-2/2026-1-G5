@@ -1,5 +1,6 @@
 package co.icesi.auth.model;
 
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -12,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,5 +49,8 @@ public class Course {
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> students;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Activity> activities;
     
 }

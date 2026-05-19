@@ -7,10 +7,4 @@ import lombok.Data;
 public class UserTeacherDTO {
     private String name;
     private String email;
-    public static UserTeacherDTO fromEntity(User teacher) {
-        UserTeacherDTO dto = new UserTeacherDTO();
-        dto.setName(teacher.getFirstName() + " "+ teacher.getLastName());
-        dto.setEmail(teacher.getEmail());
-        return dto;
-    }
 }

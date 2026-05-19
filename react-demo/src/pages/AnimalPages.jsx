@@ -1,25 +1,35 @@
-import { useState } from "react";
-import Animal from "../components/Animal/Animal";
-import animals from "../components/Animal/animals";
+import { useEffect, useState } from "react";
+import Animal from "../components/AnimalCard/Animal";
+import animals from "../components/AnimalCard/animals";
 import './animalPage.css'
+import AnimalForm from "../components/AnimalForm/AnimalForm";
 
 const AnimalPage = () => {
 
     const [animalState, setAnimalState] = useState(animals)
+    const [count, setCount] = useState(animalState.length)
 
-    const addAnimal = () => {
-        const a = {
-            "especie":"caballo",
-            "raza":"Raza caballo",
-            "imgs":""
-        }
+
+    useEffect(()=>{
+        console.log("page init")
+        },
+        []
+    )
+    
+    
+    const addAnimal = (a) => {
+        setCount(count + 1)
+        setCount(count + 1)
+        
+
+        setCount(prev => prev+1)
         setAnimalState([...animalState, a])        
     }
     
     return (
         <>
             <h1>Animales</h1>
-            <h2>Lista de mascotas</h2>
+            <h2>Lista de mascotas: {count}</h2>
             <div className="animals">
                 {
                     animalState.map( (a, i) =>
@@ -28,7 +38,7 @@ const AnimalPage = () => {
                 }
 
             </div>
-            <button onClick={addAnimal}>Agregar Animal</button>
+            <AnimalForm onClick = {addAnimal}></AnimalForm>
         </>
     )
 

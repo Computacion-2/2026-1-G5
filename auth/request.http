@@ -1,60 +1,64 @@
-@host = localhost
+@host = localhost:8080/auth
+@token = eyJhbGciOiJIUzM4NCJ9... (Replace with real token after login)
 
-GET http://{{host}}:8080/auth/api/courses
-
-
-###
-POST  http://{{host}}:8080/auth/api/courses
+### 1. Auth: Login
+POST http://{{host}}/api/auth/login
 Content-Type: application/json
 
 {
-    "name": "Compu1",
-    "description":"Spring + react",
-    "code":"20261",
-    "credits":3
+    "username": "admin",
+    "password": "admin123"
 }
 
-###
-PUT  http://{{host}}:8080/auth/api/courses/1
+### 2. Courses: List All
+GET http://{{host}}/api/courses
+Authorization: Bearer {{token}}
+
+### 3. Courses: Create
+POST http://{{host}}/api/courses
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-    "name": "Compu2",
-    "description":"Programacón web usando Spring + react",
-    "code":"20261",
-    "credits":3,
-    "teacher":{
-        "id":1
-    }
+    "name": "Sistemas Operativos",
+    "description": "Conceptos de procesos, memoria y E/S",
+    "code": "SO101",
+    "credits": 4,
+    "teacherId": 2
 }
 
+### 4. Courses: Enroll Student
+POST http://{{host}}/api/courses/1/enroll/3
+Authorization: Bearer {{token}}
 
-###
-POST  http://{{host}}:8080/auth/api/courses/1/students
+### 5. Activities: Create (Professor/Admin)
+POST http://{{host}}/api/activities
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-    "id":1
+    "name": "Parcial 1",
+    "description": "Examen sobre gestión de procesos",
+    "deadline": "2026-05-15T23:59:59",
+    "weight": 20.0,
+    "courseId": 1
 }
 
+### 6. Activities: Get by Course
+GET http://{{host}}/api/activities/course/1
+Authorization: Bearer {{token}}
 
-###
-
-GET  http://{{host}}:8080/auth/api/courses/1
+### 7. Submissions: Create (Student)
+POST http://{{host}}/api/submissions
 Content-Type: application/json
-
-###
-
-POST  http://{{host}}:8080/auth/api/auth/login
-Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-    "username":"admin",
-    "password":"admin123"
+    "content": "https://github.com/student/os-project",
+    "activityId": 1,
+    "studentId": 3
 }
 
-
-
-GET  http://{{host}}:8080/auth/api/courses
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc3NzQwNTQ3MywiZXhwIjoxNzc3NDkxODczfQ.kynrudADwi1XbaeMtop2oFAHdo2sdt0eZcVbNSqYRt98xWN70MUFV82cgBmQ9bJG
+### 8. Submissions: Grade (Professor)
+PATCH http://{{host}}/api/submissions/1/grade?grade=4.5&feedback=Buen trabajo
+Authorization: Bearer {{token}}
