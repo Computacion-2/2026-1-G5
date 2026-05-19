@@ -18,6 +18,7 @@ const LoginPage = () => {
     try {
       const response = await login(username, password);
       if (response.success) {
+        
         setIsAuthenticated(true)
         navigate('/animals');
       } else {
